@@ -1,4 +1,4 @@
-package InnotiumProject1.demo.dto;
+package InnotiumProject1.demo.precheck.dto;
 
 
 //record : 불변 데이터 홀더 -> 자동으로 getter, equals, tostring 생성

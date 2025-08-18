@@ -1,4 +1,4 @@
-package InnotiumProject1.demo.dto;
+package InnotiumProject1.demo.precheck.dto;
 
 import java.util.List;
 

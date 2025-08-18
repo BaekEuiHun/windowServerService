@@ -1,7 +1,7 @@
-package InnotiumProject1.demo.controller;
+package InnotiumProject1.demo.precheck.controller;
 
-import InnotiumProject1.demo.dto.PrecheckResponse;
-import InnotiumProject1.demo.service.PrecheckService;
+import InnotiumProject1.demo.precheck.dto.PrecheckResponse;
+import InnotiumProject1.demo.precheck.service.PrecheckService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,7 @@
-package InnotiumProject1.demo.service;
+package InnotiumProject1.demo.precheck.service;
 
 
-import InnotiumProject1.demo.dto.CheckResult;
+import InnotiumProject1.demo.precheck.dto.CheckResult;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
