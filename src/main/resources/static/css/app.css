@@ -1,0 +1,58 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh; padding: 20px;
+}
+.container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+.header { background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 30px; text-align: center; }
+.header h1 { font-size: 2.2em; margin-bottom: 8px; }
+.header p { opacity: 0.9; font-size: 1.06em; }
+.progress-container { background: #f8f9fa; padding: 20px; border-bottom: 1px solid #dee2e6; }
+.progress-bar { width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #28a745, #20c997); width: 0%; transition: width 0.5s ease; }
+.progress-text { text-align: center; margin-top: 10px; font-weight: bold; color: #495057; }
+.main-content { display: flex; min-height: 650px; }
+.sidebar { width: 340px; background: #f8f9fa; border-right: 1px solid #dee2e6; padding: 20px; }
+.step-list { list-style: none; }
+.step-item { display: flex; align-items: center; padding: 14px; margin-bottom: 10px; border-radius: 10px;
+    cursor: pointer; transition: all 0.25s ease; border: 2px solid transparent; }
+.step-item:hover { background: #e9ecef; }
+.step-item.active { background: #007bff; color: white; border-color: #0056b3; }
+.step-item.completed { background: #28a745; color: white; }
+.step-item.processing { background: #ffc107; color: #212529; animation: pulse 2s infinite; }
+@keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.02)} 100%{transform:scale(1)} }
+.step-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; margin-right: 12px; font-weight: bold; background: #6c757d; color: white; }
+.step-item.active .step-icon, .step-item.completed .step-icon { background: rgba(255,255,255,0.25); }
+.step-item.processing .step-icon { background: #dc3545; color: white; }
+.content-area { flex: 1; padding: 34px; }
+.step-content { display: none; }
+.step-content.active { display: block; animation: fadeIn 0.45s ease; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:translateY(0)} }
+.step-title { font-size: 1.9em; color: #2c3e50; margin-bottom: 12px; }
+.step-description { color: #6c757d; margin-bottom: 22px; line-height: 1.6; }
+.action-button {
+    background: linear-gradient(135deg, #007bff, #0056b3); color: white; border: none;
+    padding: 12px 22px; border-radius: 8px; font-size: 1.04em; cursor: pointer;
+    transition: all 0.25s ease; margin-right: 12px;
+}
+.action-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,123,255,0.3); }
+.action-button:disabled { background: #6c757d; cursor: not-allowed; transform: none; box-shadow: none; }
+.log-container { background: #212529; color: #28a745; border-radius: 8px; padding: 16px; margin-top: 22px;
+    max-height: 320px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.9em; }
+.log-line { margin-bottom: 6px; padding: 6px; border-left: 3px solid transparent; }
+.log-line.success { color: #28a745; border-left-color: #28a745; }
+.log-line.error { color: #dc3545; border-left-color: #dc3545; }
+.log-line.info { color: #17a2b8; border-left-color: #17a2b8; }
+.connection-status { display: flex; align-items: center; margin-bottom: 18px; padding: 14px; background: #f8f9fa; border-radius: 8px; }
+.status-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #dc3545; }
+.status-dot.connected { background: #28a745; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+.nav-buttons { margin-top: 26px; display: flex; justify-content: space-between; }
+.nav-button { background: #6c757d; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; transition: background 0.25s ease; }
+.nav-button:hover { background: #5a6268; }
+.nav-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.small { font-size: 0.92em; color:#6c757d; }
