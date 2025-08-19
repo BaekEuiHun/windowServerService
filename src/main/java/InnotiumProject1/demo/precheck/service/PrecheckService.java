@@ -1,6 +1,5 @@
 package InnotiumProject1.demo.precheck.service;
 
-
 import InnotiumProject1.demo.precheck.dto.CheckResult;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +55,5 @@ public class PrecheckService {
         }
 
     }
-
 
 }
