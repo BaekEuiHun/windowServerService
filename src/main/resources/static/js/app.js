@@ -9,10 +9,10 @@ function addLog(message, type = "info") {
     box.scrollTop = box.scrollHeight;
 }
 
-// ===== 상태표시 갱신 =====
+// ===== 상태 표시 갱신 =====
 function updateConnectionStatus(connected) {
-    const dot = document.getElementById("statusDot");        // 빨간/초록 점
-    const text = document.getElementById("statusText");       // "연결됨/연결되지 않음"
+    const dot = document.getElementById("statusDot");
+    const text = document.getElementById("statusText");
     if (!dot || !text) return;
     if (connected) {
         dot.classList.add("connected");
@@ -23,43 +23,116 @@ function updateConnectionStatus(connected) {
     }
 }
 
-// ===== 다른 버튼들은 여전히 무동작 처리 =====
-(function lockOthers() {
-    const noop = (e) => { if (e && typeof e.preventDefault === "function") e.preventDefault(); return false; };
+// ===== 진행률/단계 공통 =====
+const TOTAL_STEPS = 8; // 0~7
+let currentStep = 0;
+
+function setProgressByStep(stepIdx) {
+    const fill = document.getElementById("progressFill");
+    const txt  = document.getElementById("progressText");
+    const pct = Math.max(0, Math.min(100, (stepIdx / (TOTAL_STEPS - 1)) * 100));
+    if (fill) fill.style.width = `${pct}%`;
+    if (txt)  txt.textContent = `단계 진행 중... (${stepIdx + 1}/${TOTAL_STEPS})`;
+}
+
+function setActiveStep(stepIdx) {
+    currentStep = stepIdx;
+
+    // 본문 패널
+    document.querySelectorAll(".step-content").forEach(el => {
+        const s = Number(el.getAttribute("data-step"));
+        el.classList.toggle("active", s === stepIdx);
+    });
+
+    // 사이드바
+    document.querySelectorAll(".step-item").forEach(el => {
+        const s = Number(el.getAttribute("data-step"));
+        el.classList.toggle("active", s === stepIdx);
+        // 이미 지난 단계는 완료 느낌을 주고 싶다면 complete 클래스도 활용 가능
+        el.classList.toggle("complete", s < stepIdx);
+    });
+
+    // 진행률
+    setProgressByStep(stepIdx);
+
+    // 마지막 단계면 finish 버튼 활성
+    const finishBtn = document.getElementById("finishBtn");
+    if (finishBtn) finishBtn.disabled = (stepIdx !== TOTAL_STEPS - 1);
+}
+
+function enableButton(id, enable = true) {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !enable;
+}
+
+// ===== 초기 잠금: "실행" 계열만 잠가두고, next/finish는 우리가 제어 =====
+(function lockActionButtons() {
     const ids = [
-        /* 사전점검은 제외하고 나머지만 잠금 */
-        'nextBtn0',
-        'btnWAS', 'nextBtn1',
-        'btnTomcat', 'nextBtn2',
-        'btnNginx', 'nextBtn3',
-        'btnUpload', 'nextBtn4',
-        'btnSecurity', 'nextBtn5',
-        'btnDB', 'nextBtn6',
-        'btnStart', 'finishBtn'
+        'btnWAS','btnTomcat','btnNginx','btnUpload','btnSecurity','btnDB','btnStart'
     ];
     ids.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.disabled = true;
+            // 클릭 무력화
+            const noop = (e) => { if (e?.preventDefault) e.preventDefault(); return false; };
             el.onclick = noop;
             el.addEventListener('click', noop, true);
         }
     });
 })();
 
-// ===== 진행률 텍스트/바 초기화(고정 표시) =====
-(function initProgress() {
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    if (progressFill) progressFill.style.width = '0%';
-    if (progressText) progressText.textContent = '시작 대기 중... (0/8)';
+// ===== 진행률/로그 초기화 =====
+(function initUI() {
     const logContainer = document.getElementById('logContainer');
     if (logContainer) logContainer.innerHTML = '';
-    // 초기 상태표시
+    setActiveStep(0); // 첫 화면
     updateConnectionStatus(false);
+
+    // HTML 기본값 유지: nextBtn0~nextBtn6, finishBtn은 HTML에서 disabled 상태
+    // (nextBtn0은 사전점검 성공 시 활성화)
 })();
 
-// ===== 사전점검 버튼 동작: /api/precheck 호출 → 로그 출력 =====
+// ===== 단계 이동 공통 처리 =====
+function goNext(fromIdx) {
+    const target = fromIdx + 1;
+    // 다음 단계로 화면 전환
+    setActiveStep(target);
+
+    // 다음 단계의 "다음 단계" 버튼을 선제적으로 열어둔다(연습용 UX)
+    if (target < TOTAL_STEPS - 1) {
+        enableButton(`nextBtn${target}`, true);
+    } else {
+        // 마지막 단계면 finish만 활성
+        enableButton('finishBtn', true);
+    }
+}
+
+// ===== next/finish 버튼 배선 =====
+(function wireNextButtons() {
+    for (let i = 0; i < TOTAL_STEPS - 1; i++) {
+        const btn = document.getElementById(`nextBtn${i}`);
+        if (!btn) continue;
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (btn.disabled) return;
+            addLog(`다음 단계로 이동: ${i + 1} → ${i + 2}`, 'info');
+            goNext(i);
+        });
+    }
+
+    const finish = document.getElementById('finishBtn');
+    if (finish) {
+        finish.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (finish.disabled) return;
+            setActiveStep(TOTAL_STEPS - 1);
+            addLog('설치 마법사 완료! 🎉', 'success');
+        });
+    }
+})();
+
+// ===== 사전점검 버튼 동작: /api/precheck 호출 → 로그 출력 및 nextBtn0 활성화 =====
 (function wirePrecheck() {
     const btn = document.getElementById('btnPrecheck');
     if (!btn) return;
@@ -93,8 +166,7 @@ function updateConnectionStatus(connected) {
 
             if (Array.isArray(data.checks)) {
                 data.checks.forEach(c => {
-                    // ▶ 서버 JSON 키에 맞춰서 읽기
-                    const name = c.checkFactorName ?? '';       // ex) "DNS/호스트 확인", "핑(ICMP)", "TCP 포트22"
+                    const name = c.checkFactorName ?? '';
                     const message = c.message ?? '';
                     const msVal = c.ms;
                     const type = c.ok ? 'success' : 'error';
@@ -103,7 +175,6 @@ function updateConnectionStatus(connected) {
                     const text = name ? `${name}: ${message}${ms}` : `${message}${ms}`;
                     addLog(text, type);
 
-                    // 연결 상태 판단 기준(자유롭게 조정 가능)
                     if ((/포트|연결/i.test(name) || /TCP/i.test(name)) && c.ok) {
                         connected = true;
                     }
@@ -114,6 +185,14 @@ function updateConnectionStatus(connected) {
 
             updateConnectionStatus(connected);
             addLog('사전점검 종료', 'info');
+
+            // ✅ 연결 성공 시, 다음 단계 버튼 활성화
+            if (connected) {
+                enableButton('nextBtn0', true);
+                addLog('다음 단계 버튼이 활성화되었습니다.', 'success');
+            } else {
+                addLog('연결이 확인되지 않아 다음 단계 이동을 잠시 막았습니다.', 'error');
+            }
         } catch (err) {
             addLog(`오류: ${err}`, 'error');
             updateConnectionStatus(false);
