@@ -29,5 +29,46 @@ public class SshService {
         return session;
     }
 
+    public ExecResult exec(Session session, String command) throws JSchException, IOException {
+        Instant t0 = Instant.now();
+        ChannelExec channel = (ChannelExec) session.openChannel("exec");
+        channel.setCommand(command);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        channel.setOutputStream(out);
+        channel.setErrStream(err);
+        channel.connect();
+        while (!channel.isClosed()) {
+            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        }
+        int code = channel.getExitStatus();
+        channel.disconnect();
+        Duration d = Duration.between(t0, Instant.now());
+        return new ExecResult(command, code == 0, code, out.toString(StandardCharsets.UTF_8), err.toString(StandardCharsets.UTF_8), d.toMillis());
+    }
 
+    public ExecResult execSudo(Session session, String password, String rawCmd) throws JSchException, IOException {
+        // 단일 인용부호 이스케이프
+        String safe = rawCmd.replace("'", "'\"'\"'");
+        String sudo = "bash -lc 'echo \"" + password + "\" | sudo -S -p \"\" bash -lc \'" + safe + "\'''";
+        return exec(session, sudo);
+    }
+
+    public static class ExecResult {
+        public final String command;
+        public final boolean success;
+        public final int exitCode;
+        public final String stdout;
+        public final String stderr;
+        public final long durationMs;
+
+        public ExecResult(String command, boolean success, int exitCode, String stdout, String stderr, long durationMs) {
+            this.command = command;
+            this.success = success;
+            this.exitCode = exitCode;
+            this.stdout = stdout;
+            this.stderr = stderr;
+            this.durationMs = durationMs;
+        }
+    }
 }
