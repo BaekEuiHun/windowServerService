@@ -77,14 +77,12 @@
                     </div>
                 </li>
             </ul>
-            <p class="small">* 현재는 백엔드 미구현 상태입니다. 버튼 클릭 시 아무 동작도 하지 않습니다.</p>
         </div>
 
         <div class="content-area">
             <!-- Step 0 -->
             <div class="step-content active" data-step="0">
                 <h2 class="step-title">사전 점검 / SSH 연결</h2>
-                <p class="step-description">원격 Ubuntu 서버 접속/상태 점검. (백엔드 구현 완료)</p>
                 <div class="connection-status">
                     <div class="status-dot" id="statusDot"></div>
                     <span id="statusText">연결되지 않음</span>
@@ -107,7 +105,6 @@
             <!-- Step 1 -->
             <div class="step-content" data-step="1">
                 <h2 class="step-title">WAS 패키지 업로드/해제 & 필수 패키지</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnWAS" disabled>WAS 구성 실행</button>
                 <button class="action-button" id="nextBtn1" disabled>다음 단계</button>
             </div>
@@ -115,7 +112,6 @@
             <!-- Step 2 -->
             <div class="step-content" data-step="2">
                 <h2 class="step-title">Tomcat/JDK 구성</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnTomcat" disabled>Tomcat/JDK 설정</button>
                 <button class="action-button" id="nextBtn2" disabled>다음 단계</button>
             </div>
@@ -123,7 +119,6 @@
             <!-- Step 3 -->
             <div class="step-content" data-step="3">
                 <h2 class="step-title">Nginx 설정 & 커널 튜닝</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
                     <div class="field">
                         <label><b>웹 포트</b></label>
@@ -141,7 +136,6 @@
             <!-- Step 4 -->
             <div class="step-content" data-step="4">
                 <h2 class="step-title">소스 업로드 & Back-End 설정</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnUpload" disabled>소스 업로드 & 설정</button>
                 <button class="action-button" id="nextBtn4" disabled>다음 단계</button>
             </div>
@@ -149,7 +143,6 @@
             <!-- Step 5 -->
             <div class="step-content" data-step="5">
                 <h2 class="step-title">방화벽/SELinux/서비스 등록</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnSecurity" disabled>보안/서비스 설정</button>
                 <button class="action-button" id="nextBtn5" disabled>다음 단계</button>
             </div>
@@ -157,7 +150,6 @@
             <!-- Step 6 -->
             <div class="step-content" data-step="6">
                 <h2 class="step-title">DB & Redis 설치/초기화/권한</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnDB" disabled>DB & Redis 실행</button>
                 <button class="action-button" id="nextBtn6" disabled>다음 단계</button>
             </div>
@@ -165,7 +157,6 @@
             <!-- Step 7 -->
             <div class="step-content" data-step="7">
                 <h2 class="step-title">서비스 기동 / 에이전트 설치 / 검증</h2>
-                <p class="step-description">백엔드 구현 후 동작 예정입니다.</p>
                 <button class="action-button" id="btnStart" disabled>기동 & 검증</button>
                 <button class="action-button" id="finishBtn" disabled>설치 완료</button>
             </div>
