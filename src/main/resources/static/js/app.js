@@ -199,3 +199,94 @@ function goNext(fromIdx) {
         }
     });
 })();
+
+// ===== 2단계: WAS 구성 실행(업로드→압축해제→설치→방화벽→서비스) =====
+const API_BASE = "http://localhost:8081";  // 스프링 서버 포트
+
+// 사용자 홈 고정 경로(/home/{username}/WAS.tar) 계산
+function buildHomeTarPath(username) {
+    return (username === 'root') ? '/root/WAS.tar' : `/home/${username}/WAS.tar`;
+}
+
+// Step 1 화면에 들어왔을 때 버튼 살리기 + 핸들러 연결
+(function wireStep1_WAS() {
+    const btn = document.getElementById('btnWAS');
+    if (!btn) return;
+
+    // Step 전환될 때마다 활성화/비활성 제어를 위해 감시
+    const obs = new MutationObserver(() => {
+        const step1Panel = document.querySelector('.step-content[data-step="1"]');
+        const active = step1Panel && step1Panel.classList.contains('active');
+        btn.disabled = !active;  // Step1이 활성일 때에만 버튼 활성
+    });
+    obs.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (btn.disabled) return;
+
+        const ip   = (document.getElementById('serverIP')?.value || '').trim();
+        const user = (document.getElementById('username')?.value || '').trim();
+        const pw   = (document.getElementById('password')?.value || '').trim();
+        const file = document.getElementById('wasFile')?.files?.[0];
+
+        if (!ip || !user || !pw) {
+            addLog('IP/사용자명/비밀번호를 입력하세요.', 'error');
+            return;
+        }
+        if (!file) {
+            addLog('업로드할 WAS 패키지 파일을 선택하세요.', 'error');
+            return;
+        }
+
+        // 진행 시작 로그
+        addLog(`WAS 구성 시작: ${user}@${ip}`, 'info');
+
+        try {
+            // 멀티파트 폼 준비
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('ip', ip);
+            fd.append('username', user);
+            fd.append('password', pw);
+
+            // 백엔드가 /home/{username}/WAS.tar로 고정 업로드하도록 이미 반영했다면
+            // remotePath는 안 보내도 되지만, 호환성을 위해 같이 보냄(있어도 무시됨)
+            fd.append('remotePath', buildHomeTarPath(user));
+
+            // 압축해제 위치는 표준 배치 경로로 (/opt/app 권장)
+            fd.append('extractTo', '/opt/app');
+
+            // 원샷 엔드포인트 호출 (멀티파트)
+            const res = await fetch(`${API_BASE}/api/was/deploy-oneclick`, { method: 'POST', body: fd });
+            if (!res.ok) {
+                addLog(`요청 실패: HTTP ${res.status}`, 'error');
+                return;
+            }
+            const data = await res.json(); // { ip, user, results: [...] }
+
+            // 단계별 로그 출력
+            if (Array.isArray(data.results)) {
+                data.results.forEach(r => {
+                    const line = `${r.name}: ${r.ok ? '성공' : '실패'}${r.durationMs != null ? ` (${r.durationMs}ms)` : ''}`;
+                    addLog(line, r.ok ? 'success' : 'error');
+                    if (r.message) addLog(r.message, r.ok ? 'info' : 'error');
+                });
+            } else {
+                addLog('응답 형식이 예상과 다릅니다. (results 배열 없음)', 'error');
+                return;
+            }
+
+            // 전부 성공하면 다음 단계 버튼 열기
+            const allOk = data.results.every(r => r.ok);
+            if (allOk) {
+                addLog('WAS 구성 완료! 다음 단계로 이동 가능합니다.', 'success');
+                enableButton('nextBtn1', true);
+            } else {
+                addLog('일부 단계가 실패했습니다. 로그를 확인하세요.', 'error');
+            }
+        } catch (err) {
+            addLog(`오류: ${err}`, 'error');
+        }
+    });
+})();
