@@ -96,6 +96,15 @@
                         <label><b>사용자명</b></label>
                         <input class="input" id="username" placeholder="ubuntu" value="ubuntu">
                     </div>
+                    <!-- [Step 0] 사전 점검 / SSH 연결 - IP/사용자 아래에 비밀번호 필드 추가 -->
+                    <div class="field">
+                        <label><b>비밀번호</b></label>
+                        <input class="input" id="password" type="password" placeholder="비밀번호">
+                    </div>
+                    <!-- [Step 1] WAS 패키지 - 파일 선택 필드 추가 -->
+                    <div style="margin:12px 0;">
+                        <input type="file" id="wasFile" accept=".tar,.tar.gz,.tgz,.zip"/>
+                    </div>
                 </div>
                 <!-- onclick 제거, next 버튼은 비활성 -->
                 <button class="action-button" id="btnPrecheck">연결 & 사전 점검</button>
@@ -108,6 +117,7 @@
                 <button class="action-button" id="btnWAS" disabled>WAS 구성 실행</button>
                 <button class="action-button" id="nextBtn1" disabled>다음 단계</button>
             </div>
+
 
             <!-- Step 2 -->
             <div class="step-content" data-step="2">
