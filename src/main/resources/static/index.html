@@ -112,6 +112,10 @@
                 <h2 class="step-title">WAS 패키지 업로드/해제 & 필수 패키지</h2>
                 <button class="action-button" id="btnWAS" disabled>WAS 구성 실행</button>
                 <button class="action-button" id="nextBtn1" disabled>다음 단계</button>
+                <!-- [Step 2] WAS 패키지 - 파일 선택 필드 추가 -->
+                <div style="margin:12px 0;">
+                    <input type="file" id="wasFile" accept=".tar,.tar.gz,.tgz,.zip"/>
+                </div>
             </div>
 
 
@@ -122,10 +126,7 @@
                 <button class="action-button" id="btnTomcat" disabled>Tomcat/JDK 설정</button>
                 <button class="action-button" id="nextBtn2" disabled>다음 단계</button>
             </div>
-            <!-- [Step 2] WAS 패키지 - 파일 선택 필드 추가 -->
-            <div style="margin:12px 0;">
-                <input type="file" id="wasFile" accept=".tar,.tar.gz,.tgz,.zip"/>
-            </div>
+
 
             <!-- Step 3 -->
             <div class="step-content" data-step="3">
