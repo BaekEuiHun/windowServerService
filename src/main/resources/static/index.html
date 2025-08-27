@@ -101,10 +101,6 @@
                         <label><b>비밀번호</b></label>
                         <input class="input" id="password" type="password" placeholder="비밀번호">
                     </div>
-                    <!-- [Step 1] WAS 패키지 - 파일 선택 필드 추가 -->
-                    <div style="margin:12px 0;">
-                        <input type="file" id="wasFile" accept=".tar,.tar.gz,.tgz,.zip"/>
-                    </div>
                 </div>
                 <!-- onclick 제거, next 버튼은 비활성 -->
                 <button class="action-button" id="btnPrecheck">연결 & 사전 점검</button>
@@ -119,11 +115,16 @@
             </div>
 
 
+
             <!-- Step 2 -->
             <div class="step-content" data-step="2">
                 <h2 class="step-title">Tomcat/JDK 구성</h2>
                 <button class="action-button" id="btnTomcat" disabled>Tomcat/JDK 설정</button>
                 <button class="action-button" id="nextBtn2" disabled>다음 단계</button>
+            </div>
+            <!-- [Step 2] WAS 패키지 - 파일 선택 필드 추가 -->
+            <div style="margin:12px 0;">
+                <input type="file" id="wasFile" accept=".tar,.tar.gz,.tgz,.zip"/>
             </div>
 
             <!-- Step 3 -->
